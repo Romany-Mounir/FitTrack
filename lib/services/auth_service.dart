@@ -47,11 +47,11 @@ class UserManager {
   Future<UserModel?> signUp({
     required String email,
     required String password,
-    required String name,
-    required String gender,
+    String? name,
+    String? gender,
     required BuildContext context,
   }) async {
-    final response = await baseRequest<Map<String, dynamic>>(
+    final response = await baseRequest<AuthResponse>(
       request: supabase.auth.signUp(
         email: email,
         password: password,
@@ -74,7 +74,7 @@ class UserManager {
     required String password,
     required BuildContext context,
   }) async {
-    final response = await baseRequest<Map<String, dynamic>>(
+    final response = await baseRequest<AuthResponse>(
       request: supabase.auth.signInWithPassword(
         email: email,
         password: password,
@@ -100,13 +100,19 @@ class UserManager {
   Future<UserModel?> fetchUserFromSupabase() async {
     UserResponse? userResponse;
     try {
-      userResponse = await supabase.auth.getUser();
+      final session = supabase.auth.currentSession;
+      if (session != null) {
+        userResponse = await supabase.auth.getUser();
+      } else {
+        return null;
+      }
     } catch (e) {
       _logger.e('Error fetching user: $e');
       return null;
     }
 
     user = UserModel.fromSupabase(userResponse.user?.toJson() ?? {});
+    Logger().w(user?.toSupabase().toString());
 
     // Convert Supabase user to custom UserModel
     return user;
@@ -128,5 +134,22 @@ class UserManager {
     if (response?.user != null) {
       _logger.i('User metadata updated');
     }
+  }
+
+  // Reset password function
+  Future<void> resetPassword({
+    required String email,
+    required BuildContext context,
+  }) async {
+    await baseRequest<void>(
+      request: supabase.auth.resetPasswordForEmail(email),
+      context: context,
+      successMessage: 'Password reset email sent',
+    );
+  }
+
+  // Get user details
+  UserModel? getUser() {
+    return user;
   }
 }

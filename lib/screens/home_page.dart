@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late UserModel? user;
   double stepPercent = 0.0;
   int currentSteps = 0;
   int caloriesBurned = 0;
@@ -26,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   bool dataAvailable = true;
   final int goalSteps = 10000;
   AppState _state = AppState.DATA_NOT_FETCHED;
-
 
   List<HealthDataType> get types =>
       (Platform.isAndroid)
@@ -109,9 +107,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(
-          () =>
-      _state =
-      (authorized) ? AppState.AUTHORIZED : AppState.AUTH_NOT_GRANTED,
+      () =>
+          _state =
+              (authorized) ? AppState.AUTHORIZED : AppState.AUTH_NOT_GRANTED,
     );
     return (authorized);
   }
@@ -149,15 +147,17 @@ class _HomePageState extends State<HomePage> {
         for (var dp in healthData) {
           switch (dp.type) {
             case HealthDataType.STEPS:
-              totalSteps += (dp.value as NumericHealthValue).numericValue.toInt();
+              totalSteps +=
+                  (dp.value as NumericHealthValue).numericValue.toInt();
               break;
             case HealthDataType.ACTIVE_ENERGY_BURNED:
               totalCalories += (dp.value as NumericHealthValue).numericValue;
               break;
 
-              // Todo: review data type
-              case HealthDataType.EXERCISE_TIME:
-              totalMinutes += (dp.value as NumericHealthValue).numericValue.toInt();
+            // Todo: review data type
+            case HealthDataType.EXERCISE_TIME:
+              totalMinutes +=
+                  (dp.value as NumericHealthValue).numericValue.toInt();
               break;
             default:
               break;

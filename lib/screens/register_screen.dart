@@ -23,13 +23,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => isLoading = true);
 
     try {
-      final response = await Supabase.instance.client.auth.signUp(
+      var response = await UserManager.instance.signUp(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
-        data: {'name': nameController.text.trim()},
+        name: nameController.text.trim(),
+        context: context,
       );
 
-      if (response.user == null) {
+      if (response == null) {
         if (mounted) {
           ScaffoldMessenger.of(
             context,

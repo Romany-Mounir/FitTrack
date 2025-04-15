@@ -17,12 +17,12 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     setState(() => isLoading = true);
     try {
-      final user = await Supabase.instance.client.auth.signInWithPassword(
+      var response = await UserManager.instance.signIn(
         password: passwordController.text,
         email: emailController.text,
+        context: context,
       );
-      Logger().t(user.user?.toJson().toString());
-      if (user.user != null) {
+      if (response != null) {
         if (mounted) {
           AppNavigator.push(context, AppRoutes.home);
         }
